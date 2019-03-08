@@ -397,7 +397,9 @@ export default class SortableList extends Component {
    * swaps them, else shifts rows.
    */
   _setOrderOnMove() {
+    const {noDrag} = this.props
     const {activeRowKey, activeRowIndex, order} = this.state;
+
 
     if (activeRowKey === null || this._autoScrollInterval) {
       return;
@@ -408,10 +410,14 @@ export default class SortableList extends Component {
       rowIndex: rowUnderActiveIndex,
     } = this._findRowUnderActiveRow();
 
+    
     if (this._movingDirectionChanged) {
       this._prevSwapedRowKey = null;
     }
 
+    const dragDisabled = noDrag && noDrag.findIndex((v) => v === rowUnderActiveKey) !== -1
+    if (dragDisabled) return
+    
     // Swap rows if necessary.
     if (rowUnderActiveKey !== activeRowKey && rowUnderActiveKey !== this._prevSwapedRowKey) {
       const isNeighbours = Math.abs(rowUnderActiveIndex - activeRowIndex) === 1;
