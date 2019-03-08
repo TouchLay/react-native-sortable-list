@@ -17,6 +17,7 @@ export default class SortableList extends Component {
   static propTypes = {
     data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
     order: PropTypes.arrayOf(PropTypes.any),
+    disabled: PropTypes.arrayOf(PropTypes.any),
     style: ViewPropTypes.style,
     contentContainerStyle: ViewPropTypes.style,
     innerContainerStyle: ViewPropTypes.style,
@@ -271,7 +272,7 @@ export default class SortableList extends Component {
   }
 
   _renderRows() {
-    const {horizontal, rowActivationTime, sortingEnabled, renderRow} = this.props;
+    const {horizontal, noDrag, rowActivationTime, sortingEnabled, renderRow} = this.props;
     const {animated, order, data, activeRowKey, releasedRowKey, rowsLayouts} = this.state;
 
 
@@ -299,6 +300,8 @@ export default class SortableList extends Component {
         style[ZINDEX] = 100;
       }
 
+      const dragDisabled = noDrag && noDrag.findIndex((v) => v === key) !== -1
+
       return (
         <Row
           key={uniqueRowKey(key)}
@@ -307,6 +310,7 @@ export default class SortableList extends Component {
           activationTime={rowActivationTime}
           animated={animated && !active}
           disabled={!sortingEnabled}
+          dragDisabled={dragDisabled}
           style={style}
           location={location}
           onLayout={!rowsLayouts ? this._onLayoutRow.bind(this, key) : null}

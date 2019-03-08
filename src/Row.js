@@ -8,6 +8,7 @@ export default class Row extends Component {
     children: PropTypes.node,
     animated: PropTypes.bool,
     disabled: PropTypes.bool,
+    dragDisabled: PropTypes.bool,
     horizontal: PropTypes.bool,
     style: Animated.View.propTypes.style,
     location: PropTypes.shape({
@@ -43,6 +44,11 @@ export default class Row extends Component {
     this._animatedLocation.addListener(this._onChangeLocation);
   }
 
+  _dragEnabled = () => {
+    const { dragDisabled } = this.props
+    return !(dragDisabled === true)
+  }
+
   _panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => !this._isDisabled(),
 
@@ -73,6 +79,7 @@ export default class Row extends Component {
       };
 
       if (this.props.manuallyActivateRows) return;
+      if (!this._dragEnabled()) return;
 
       this._longPressTimer = setTimeout(() => {
         if (this._active) return;
@@ -82,6 +89,7 @@ export default class Row extends Component {
     },
 
     onPanResponderMove: (e, gestureState) => {
+      if (!this._dragEnabled()) return;
       if (
         !this._active ||
         gestureState.numberActiveTouches > 1 ||
