@@ -183,6 +183,54 @@ export default class SortableList extends Component {
     }
   }
 
+  smartScrollToRowKey ({ key, animated = false }, n = 0) {
+    if (n >= 5) return
+    if (this.state.rowsLayouts) {
+      const { order, containerLayout, containerWidth, containerHeight, rowsLayouts } = this.state
+
+      let keyX = 0
+      let keyY = 0
+      let myKeyX = 0
+      let myKeyY = 0
+
+      for (const rowKey of order) {
+        if (rowKey === key) {
+          myKeyX = rowsLayouts[rowKey].width
+          myKeyY = rowsLayouts[rowKey].height
+          break
+        }
+
+        keyX += rowsLayouts[rowKey].width
+        keyY += rowsLayouts[rowKey].height
+      }
+
+      // Scroll if the row is not visible and relatively centered.
+      if (
+        this.props.horizontal
+          ? (keyX < this._contentOffset.x * 1.25 || keyX > this._contentOffset.x + containerLayout.width * 0.75)
+          : (keyY < this._contentOffset.y * 1.25 || keyY > this._contentOffset.y + containerLayout.height * 0.75)
+      ) {
+        
+        keyX -= (containerLayout.width / 2 - myKeyX / 2) 
+        keyY -= (containerLayout.height / 2 - myKeyY / 2)
+
+        keyX = keyX < 0 ? 0 : keyX
+        keyY = keyY < 0 ? 0 : keyY
+
+        if (this.props.horizontal) {
+          this._contentOffset.x = keyX;
+        } else {
+          this._contentOffset.y = keyY;
+        }
+
+        this._scroll(animated);
+      }
+    } else {
+      setTimeout(() => this.smartScrollToRowKey({key, animated}, n + 1), 40)
+    }
+  }
+
+
   render() {
     let {contentContainerStyle, innerContainerStyle, horizontal, style, showsVerticalScrollIndicator, showsHorizontalScrollIndicator} = this.props;
     const {animated, contentHeight, contentWidth, scrollEnabled} = this.state;
