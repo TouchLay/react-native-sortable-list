@@ -1,6 +1,6 @@
 import React, {Component, cloneElement} from 'react';
 import PropTypes from 'prop-types';
-import {Animated, PanResponder, StyleSheet} from 'react-native';
+import {Animated, PanResponder, StyleSheet, ViewPropTypes} from 'react-native';
 import {shallowEqual} from './utils';
 
 export default class Row extends Component {
@@ -10,7 +10,7 @@ export default class Row extends Component {
     disabled: PropTypes.bool,
     dragDisabled: PropTypes.bool,
     horizontal: PropTypes.bool,
-    style: Animated.View.propTypes.style,
+    style: ViewPropTypes.style,
     location: PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
